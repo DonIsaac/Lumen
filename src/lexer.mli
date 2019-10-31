@@ -1,5 +1,10 @@
+exception IllegalExpression of string
+
 type token =
 | Tok_Int of int
+| Tok_Let
+| Tok_ID of string
+| Tok_Assign
 | Tok_Mult
 | Tok_Div
 | Tok_Plus
