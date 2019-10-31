@@ -1,0 +1,11 @@
+B /home/donisaac/.opam/4.07.0/lib/bytes
+B /home/donisaac/.opam/4.07.0/lib/oUnit
+B /home/donisaac/.opam/4.07.0/lib/ocaml
+B ../_build/default/src/.disc.objs
+B ../_build/default/test/.public.eobjs
+S /home/donisaac/.opam/4.07.0/lib/bytes
+S /home/donisaac/.opam/4.07.0/lib/oUnit
+S /home/donisaac/.opam/4.07.0/lib/ocaml
+S ../src
+S .
+FLG -w -40

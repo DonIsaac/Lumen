@@ -1,0 +1,4 @@
+(library
+  (name calc)
+  (modules lexer parser interpreter)
+  (libraries str))
