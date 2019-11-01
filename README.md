@@ -5,6 +5,7 @@ input through a lexer and parser, and then evaluating the resulting AST.
 This interpreter has the following features:
 
 - Addition, subtraction, multiplication, and division
+- logarithms and exponents
 - Variable declaration, assignment, and usage
 - Negative and positive integers
 - Right-associative calculations
@@ -31,6 +32,12 @@ make run # execute the binary
 = 11
 > (x * y) / (x + y)
 = 8
+> log base 2 of 64
+= 6
+> 2^4-1
+= 15
+> log base 10 of (2^5 * 9 - 1)
+= 2
 > exit 0
 ```
 
@@ -62,6 +69,6 @@ if the required dependencies are not installed.
 - __make test__ - Runs the tests found in `test/test.ml`
 
 ## Features TODO
-- Add exponents and logarithms
+
 - Add summations
 - Add support for floating point numbers

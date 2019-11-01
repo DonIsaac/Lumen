@@ -11,6 +11,10 @@ type token =
 | Tok_Minus
 | Tok_LParen
 | Tok_RParen
+| Tok_Exp
+| Tok_Log
+| Tok_Base
+| Tok_Of
 | Tok_EOF
 | Tok_Exit
 

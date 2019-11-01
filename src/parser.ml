@@ -13,6 +13,8 @@ type expr =
   | Decl of string * expr
   | Assign of string * expr
   | Var of string
+  | Log of expr * expr
+  | Exp of expr * expr
   | Exit of expr
 
 (* Provided helper function - takes a token list and an exprected token.
@@ -37,7 +39,8 @@ let lookahead toks = match toks with
 D -> let ID = A | A | exit N
 A -> ID = A | S 
 S -> M + S | M - S | M 
-M -> U * M | U / M | U
+M -> E * M | E / M | E
+E -> U ^ E | log base A of U | U
 U -> +N | -N | N
 N -> n | ID | (A)
 where n is any integer
@@ -109,10 +112,10 @@ and parse_S (toks : token list) : (token list * expr) =
 
 (*
   Parses the M rule.
-  M -> U * M | U / M | U
+  M -> E * M | E / M | E
 *)
 and parse_M (toks : token list) : (token list * expr) =
-  let a1 = parse_U toks in
+  let a1 = parse_E toks in
   let (toks, expr) = a1 in
   let next = lookahead toks in
   match next with
@@ -123,6 +126,32 @@ and parse_M (toks : token list) : (token list * expr) =
     let (_tok, _expr) = parse_M (match_token toks Tok_Div) in
     (_tok, Div (expr, _expr))
   | _ -> a1
+(*
+  Parses the E rule.
+  E -> U ^ E | log base A of U | U
+*)
+and parse_E (toks : token list) : (token list * expr) =
+  let next = lookahead toks in
+  match next with
+  | Tok_Log -> (* Parse log expressions *)
+    let toks = match_token ( match_token toks Tok_Log) Tok_Base in
+    let a1 = parse_A toks in
+    let (toks, a_expr) = a1 in
+    let a2 = parse_U ( match_token toks Tok_Of) in
+    let (toks, u_expr) = a2 in
+    (toks, Log(a_expr, u_expr))
+  | _ ->  (* Parse exp or U rules *)
+    let a1 = parse_U toks in
+    let (toks, u_expr) = a1 in
+    let next = lookahead toks in
+    match next with
+    | Tok_Exp ->
+      let a2 = parse_E (match_token toks Tok_Exp) in
+      let (toks, e_expr) = a2 in
+      (toks, Exp(u_expr, e_expr))
+    | _ -> a1
+
+
 
 and parse_U (toks : token list) : (token list * expr) =
   let token = lookahead toks in

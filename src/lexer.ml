@@ -10,6 +10,10 @@ type token =
 | Tok_Minus
 | Tok_LParen
 | Tok_RParen
+| Tok_Exp
+| Tok_Log
+| Tok_Base
+| Tok_Of
 | Tok_EOF
 | Tok_Exit
 
@@ -24,6 +28,10 @@ let string_of_token tok = match tok with
 | Tok_Minus -> "-"
 | Tok_LParen -> "("
 | Tok_RParen -> ")"
+| Tok_Exp -> "^"
+| Tok_Log -> "log"
+| Tok_Base -> "base"
+| Tok_Of -> "of"
 | Tok_EOF -> "EOF"
 | Tok_Exit -> "exit"
 
@@ -45,6 +53,10 @@ let re_plus = Str.regexp "+"
 let re_minus = Str.regexp "-"
 let re_lparen = Str.regexp "("
 let re_rparen = Str.regexp ")"
+let re_exp = Str.regexp "\\^"
+let re_log = Str.regexp "log[^a-zA-Z0-9]"
+let re_base = Str.regexp "base[^a-zA-Z0-9]"
+let re_of = Str.regexp "of[^a-zA-Z0-9]"
 let re_exit = Str.regexp "exit"
 
 let re_whitespace = Str.regexp "[ \n\r\x0c\t]+"
@@ -74,6 +86,14 @@ let rec lexer (input : string) : token list =
         Tok_Assign::(tok (pos+1) str)
       else if (Str.string_match re_let str pos) then
         Tok_Let::(tok (pos+3) str)
+      else if (Str.string_match re_exp str pos) then
+        Tok_Exp::(tok (pos+1) str)
+      else if (Str.string_match re_log str pos) then
+        Tok_Log::(tok (pos+3) str)
+      else if (Str.string_match re_base str pos) then
+        Tok_Base::(tok (pos+4) str)
+      else if (Str.string_match re_of str pos) then
+        Tok_Of::(tok (pos+2) str)
       else if (Str.string_match re_exit str pos) then
         Tok_Exit::(tok (pos+4) str)
       else if (Str.string_match re_id str pos) then

@@ -56,4 +56,7 @@ let rec eval (ast : expr) : int =
   | Decl(id, a1) -> add_var id (eval a1) 
   | Assign(id, a1) -> modify_var id (eval a1)
   | Var(id) -> var_lookup id
+  | Exp(a1, a2) -> int_of_float @@ (float_of_int (eval a1) ** (float_of_int (eval a2)))
+  (* Log_b x = Log_a x/Log_a b *)
+  | Log(a1, a2) -> int_of_float @@ log (float_of_int @@ eval a2) /. log (float_of_int @@ eval a1)
   | Exit(a1) -> exit (eval a1)
