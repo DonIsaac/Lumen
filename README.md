@@ -48,9 +48,10 @@ The language used by this interpreter is described by the following
 
 ```
 D -> let ID = A | A | exit N
-A -> ID = A | S
-S -> M + S | M - S | M
-M -> U * M | U / M | U
+A -> ID = A | S 
+S -> M + S | M - S | M 
+M -> E * M | E / M | E
+E -> U ^ E | log base A of U | U
 U -> +N | -N | N
 N -> n | ID | (A)
 where n is any integer
