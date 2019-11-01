@@ -1,8 +1,7 @@
-EXCLUDE_QUERY_DIR
-B /Users/donisaac/.opam/4.07.0/lib/ocaml
-B ../_build/default/bin/.calculator.eobjs/byte
-B ../_build/default/src/.calc.objs/byte
-S /Users/donisaac/.opam/4.07.0/lib/ocaml
+B /home/donisaac/.opam/4.07.0/lib/ocaml
+B ../_build/default/bin/.calculator.eobjs
+B ../_build/default/src/.calc.objs
+S /home/donisaac/.opam/4.07.0/lib/ocaml
 S .
 S ../src
 FLG -w -40
