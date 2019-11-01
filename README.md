@@ -11,9 +11,13 @@ This interpreter has the following features:
 
 ## Installation
 
+Make sure you have [opam](https://opam.ocaml.org/) and [ocaml](https://ocaml.org/)
+installed before continuing
+
 ```sh
 git clone https://github.com/DonIsaac/Arithmetic-Interpreter.git
 cd Arithmetic-Interpreter
+make install # Install necessary dependencies
 make # Build the interpreter using dune
 make run # execute the binary
 ```
@@ -32,7 +36,8 @@ make run # execute the binary
 
 ## Grammar
 
-The language used by this interpreter is described by the following CFG:
+The language used by this interpreter is described by the following
+[CFG](https://en.wikipedia.org/wiki/Context-free_grammar):
 
 ```
 D -> let ID = A | A | exit N
@@ -43,6 +48,18 @@ U -> +N | -N | N
 N -> n | ID | (A)
 where n is any integer
 ```
+
+## Available Tasks
+
+A set of [make](https://www.gnu.org/software/make/) tasks have been provided for convenience purposes. You must have
+make installed in order to use them. The available commands are as follows:
+
+- __make build__ - Default command. Compiles the interpreter. This task will fail
+if the required dependencies are not installed.
+- __make install__ - Installs dependencies required for calculation
+- __make run__ - Executes the compiled interpreter
+- __make utop__ - Launches `utop` for testing purposes
+- __make test__ - Runs the tests found in `test/test.ml`
 
 ## Features TODO
 - Add exponents and logarithms
