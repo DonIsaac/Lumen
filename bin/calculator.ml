@@ -1,11 +1,16 @@
 open Calc.Lexer
 open Calc.Parser
 open Calc.Interpreter
+open ANSITerminal
 
 let exec str = eval ( parser ( lexer str ))
 
+let prerr_endline str = ANSITerminal.prerr_string [Foreground(Red); Bold] str ; prerr_newline ()
+;;
+let print_endline str = ANSITerminal.print_string [Foreground(Green)] str ; print_newline ()
+;;
 let rec loop () =
-  print_string "> ";
+  print_string [Foreground(White); Bold] "> ";
   let input = read_line () in
   try
     begin

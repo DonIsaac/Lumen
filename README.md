@@ -43,3 +43,8 @@ U -> +N | -N | N
 N -> n | ID | (A)
 where n is any integer
 ```
+
+## Features TODO
+- Add exponents and logarithms
+- Add summations
+- Add support for floating point numbers

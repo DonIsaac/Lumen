@@ -24,7 +24,7 @@ let string_of_token tok = match tok with
 | Tok_Minus -> "-"
 | Tok_LParen -> "("
 | Tok_RParen -> ")"
-| Tok_EOF -> ""
+| Tok_EOF -> "EOF"
 | Tok_Exit -> "exit"
 
 let rec string_of_list conv lst =
