@@ -1,8 +1,10 @@
 # Arithmetic Interpreter
 
-This project is an arithmetic expression interpreter. It works by sending user
-input through a lexer and parser, and then evaluating the resulting AST.
-This interpreter has the following features:
+This project is an interpreter for a language that supports some basic mathematical
+operations. It works by sending user input through a lexer and parser, and then
+evaluating the resulting AST.
+
+The language used by this interpreter supports the following features:
 
 - Addition, subtraction, multiplication, and division
 - logarithms and exponents
