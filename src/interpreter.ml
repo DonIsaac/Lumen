@@ -16,13 +16,13 @@ let is_var_defined (identifier : string) : bool =
   in check_env !env identifier
 ;;
 
-let add_var (id : string) (value : int) : var list = 
+let add_var (id : string) (value : int) : int = 
   if is_var_defined id then
     raise @@ EvalError ("Identifier '" ^ id ^ "' is already defined")
   else
     let v = ref value in 
     env := Var(id, v)::(!env);
-    !env
+    value
 ;;
 
 let modify_var (id : string) (newvalue : int) : int =
@@ -48,11 +48,12 @@ let var_lookup (id : string) : int =
 let rec eval (ast : expr) : int =
   match ast with
   | Int(n) -> n
+  | Neg(a1) -> -(eval a1)
   | Plus(a1, a2) -> (eval a1) + (eval a2)
   | Minus(a1, a2) -> (eval a1) - (eval a2)
   | Mult(a1, a2) -> (eval a1) * (eval a2)
   | Div(a1, a2) -> (eval a1) / (eval a2)
-  | Decl(id, a1) -> add_var id (eval a1) ; 0 (* TODO: hotfix *)
+  | Decl(id, a1) -> add_var id (eval a1) 
   | Assign(id, a1) -> modify_var id (eval a1)
   | Var(id) -> var_lookup id
   | Exit(a1) -> exit (eval a1)

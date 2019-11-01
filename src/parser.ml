@@ -5,6 +5,7 @@ exception ParseError of string
 (* Types *)
 type expr =
   | Int of int
+  | Neg of expr
   | Plus of expr * expr
   | Minus of expr * expr
   | Mult of expr * expr
@@ -36,7 +37,8 @@ let lookahead toks = match toks with
 D -> let ID = A | A | exit N
 A -> ID = A | S 
 S -> M + S | M - S | M 
-M -> N * M | N / M | N
+M -> U * M | U / M | U
+U -> +N | -N | N
 N -> n | ID | (A)
 where n is any integer
 *)
@@ -47,7 +49,7 @@ let rec parser (toks : token list) : expr =
   let next = lookahead toks in
   match next with
   | Tok_EOF -> expr
-  | _ -> raise (ParseError("Expected Tok_EOF, got" ^ (string_of_token next)))
+  | _ -> raise (ParseError("Expected Tok_EOF, got " ^ (string_of_token next)))
 
 and parse_D (toks : token list) : (token list * expr) =
   let next = lookahead toks in
@@ -107,10 +109,10 @@ and parse_S (toks : token list) : (token list * expr) =
 
 (*
   Parses the M rule.
-  M -> N * M | N / M | N
+  M -> U * M | U / M | U
 *)
 and parse_M (toks : token list) : (token list * expr) =
-  let a1 = parse_N toks in
+  let a1 = parse_U toks in
   let (toks, expr) = a1 in
   let next = lookahead toks in
   match next with
@@ -122,9 +124,18 @@ and parse_M (toks : token list) : (token list * expr) =
     (_tok, Div (expr, _expr))
   | _ -> a1
 
+and parse_U (toks : token list) : (token list * expr) =
+  let token = lookahead toks in
+  match token with
+  | Tok_Plus -> parse_N (match_token toks token)
+  | Tok_Minus ->
+    let a1 = parse_N (match_token toks token) in
+    let (toks, n_expr) = a1 in
+    (toks, Neg(n_expr))
+  | _ -> parse_N toks
 (*
   Parses the N rule.
-  N -> n | -N | (S)
+  N -> n | ID | (S)
 *)
 and parse_N (toks : token list) : (token list * expr) =
   let token = lookahead toks in
