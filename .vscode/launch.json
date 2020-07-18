@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Calculator",
+            "type": "ocamldebug",
+            "request": "launch",
+            "program": "${workspaceRoot}/_build/default/bin/calculator.bc",
+            "console": "internalConsole",
+            "stopOnEntry": false
+        },
+        {
+            "name": "Test",
+            "type": "ocaml-debugger",
+            "request": "launch",
+            "program": "${workspaceRoot}/_build/default/test/test.bc",
+            "console": "internalConsole",
+            "stopOnEntry": false
+        }
+    ]
+}

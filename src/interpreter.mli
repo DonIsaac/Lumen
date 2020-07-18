@@ -1,3 +1,6 @@
+open Ast
 exception EvalError of string
+exception TypeError of string
 
-val eval : Parser.expr -> int
+(* type primitive = Val_Int of int | Val_Bool of bool *)
+val eval : Ast.expr -> primitive

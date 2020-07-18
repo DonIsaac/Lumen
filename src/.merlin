@@ -1,5 +1,6 @@
+EXCLUDE_QUERY_DIR
 B /home/donisaac/.opam/4.07.0/lib/ocaml
-B ../_build/default/src/.calc.objs
+B ../_build/default/src/.calc.objs/byte
 S /home/donisaac/.opam/4.07.0/lib/ocaml
 S .
-FLG -open Calc -w -40
+FLG -open Calc -w -40 -g

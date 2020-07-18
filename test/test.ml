@@ -1,7 +1,9 @@
 open OUnit2
-open Disc.Lexer
-open Disc.Parser
-open Disc.Interpreter
+open Calc.TokenTypes
+open Calc.Ast
+open Calc.Lexer
+open Calc.Parser
+open Calc.Interpreter
 
 let test_lex_empty ctxt =
   assert_equal [Tok_EOF] (lexer " ")
@@ -55,25 +57,25 @@ let test_parentheses ctxt =
   assert_equal (Plus (Plus (Int 1, Int 2), Int 3)) (parser [Tok_LParen; Tok_Int 1; Tok_Plus; Tok_Int 2; Tok_RParen; Tok_Plus; Tok_Int 3; Tok_EOF])
 
 let test_one_interpreter ctxt =
-  assert_equal 1 (eval (Int 1))
+  assert_equal (Val_Int(1)) (eval (Int 1))
 
 let test_one_plus_two_interpreter ctxt =
-  assert_equal 3 (eval (Plus (Int 1, Int 2)))
+  assert_equal ( Val_Int(3) ) (eval (Plus (Int 1, Int 2)))
 
 let test_long_interpreter_1 ctxt =
-  assert_equal 6 (eval (Plus (Int 1, Plus (Int 2, Int 3))))
+  assert_equal ( Val_Int(6) ) (eval (Plus (Int 1, Plus (Int 2, Int 3))))
 
 let test_long_interpreter_2 ctxt =
-  assert_equal 6 (eval (Plus (Plus (Int 1, Int 2), Int 3)))
+  assert_equal ( Val_Int(6) ) (eval (Plus (Plus (Int 1, Int 2), Int 3)))
 
 let test_long_interpreter_3 ctxt =
-  assert_equal 6 (eval (Mult (Mult (Int 1, Int 2), Int 3)))
+  assert_equal ( Val_Int(6) ) (eval (Mult (Mult (Int 1, Int 2), Int 3)))
 
 let test_long_interpreter_4 ctxt =
-  assert_equal 12 (eval (Plus (Mult (Plus (Int 1, Int 2), Int 3), Int 3)))
+  assert_equal ( Val_Int(12) ) (eval (Plus (Mult (Plus (Int 1, Int 2), Int 3), Int 3)))
 
 let test_long_interpreter_5 ctxt =
-  assert_equal 21 (eval (Mult (Plus (Mult (Int 3, Int 2), Int 1), Int 3)))
+  assert_equal ( Val_Int(21) ) (eval (Mult (Plus (Mult (Int 3, Int 2), Int 1), Int 3)))
 
 let suite =
   "public" >::: [
@@ -84,7 +86,7 @@ let suite =
     "long_lexer_1" >:: test_long_lexer_1;
     "long_lexer_2" >:: test_long_lexer_2;
     "long_lexer_3" >:: test_long_lexer_3;
-    "long_lexer_4" >:: test_long_lexer_4;
+   "long_lexer_4" >:: test_long_lexer_4;
     "parse_one" >:: test_parse_one;
     "parse_one_plus_two" >:: test_parse_one_plus_two;
     "parse_one_times_two" >:: test_parse_one_times_two;

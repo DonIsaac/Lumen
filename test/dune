@@ -1,3 +1,12 @@
-(tests
-  (names test)
-  (libraries calc str oUnit))
+(executables
+  (names test parser-unit-test)
+  (libraries str calc oUnit))
+
+(alias
+  (name runtest)
+;  (deps (source_tree ./data))
+  (action
+    (progn (run ./test.bc)
+    (run ./parser-unit-test.bc))
+  )
+)

@@ -1,9 +1,10 @@
 OBJECTS = src/*.ml* bin/*.ml*
+TARGET = calculator
 
 build: $(OBJECTS)
 	dune build bin/calculator.exe
 
-.PHONY: utop run install test
+.PHONY: utop run install test debug build-debug
 
 install:
 	opam install dune ANSITerminal merlin utop ounit2
@@ -18,3 +19,11 @@ run:
 
 test:
 	dune runtest -f
+
+# ------------------ DEBUGGING COMMANDS ------------------
+
+debug: build-debug
+	ocamldebug _build/default/bin/$(TARGET).bc
+
+build-debug: $(OBJECTS)
+	dune build bin/$(TARGET).bc

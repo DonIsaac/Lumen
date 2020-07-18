@@ -1,1 +1,2 @@
-val exec : string -> int
+open Calc.Ast
+val exec : string -> primitive
