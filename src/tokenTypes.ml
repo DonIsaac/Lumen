@@ -3,6 +3,8 @@ type token =
   | Tok_Int of int
   | Tok_Bool of bool
   | Tok_ID of string
+  | Tok_Null
+  | Tok_Term
   (* Operators *)
   | Tok_Assign
   | Tok_Op_LAnd           (* Logical AND              *)

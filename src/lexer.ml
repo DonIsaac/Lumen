@@ -7,6 +7,8 @@ let string_of_token tok = match tok with
   | Tok_Int(i)            -> string_of_int i
   | Tok_Bool(b)           -> string_of_bool b
   | Tok_ID(id)            -> id
+  | Tok_Null              -> "null"
+  | Tok_Term              -> ";"
 
   | Tok_Assign            -> "="
   | Tok_Op_LAnd           -> "and"
@@ -46,6 +48,8 @@ let re_int                = Str.regexp "[0-9]+"
 (* let re_bool               = Str.regexp "\\(true\\|false\\)\\(\b\\|$\\)" *)
 let re_bool               = keyword_regex "\\(true\\|false\\)"
 let re_id                 = Str.regexp "[a-zA-Z][a-zA-Z0-9]*"
+let re_null               = keyword_regex "null"
+let re_term               = Str.regexp ";"
 
 (* Operators *)
 let re_assign             = Str.regexp "="
@@ -91,6 +95,12 @@ let rec lexer (input : string) : token list =
         let s = Str.matched_string str in
         if s = "true" || s = "false"
           then Tok_Bool(bool_of_string @@ s)::(tok (pos+ (String.length s)) str) else raise @@ IllegalExpression ("Tried to tokenize string '" ^ s ^ "' as a boolean")
+
+      else if (Str.string_match re_null str pos) then
+        Tok_Null::(tok (pos + 4) str)
+
+      else if (Str.string_match re_term str pos) then
+        Tok_Term::(tok (pos + 1) str)
 
       else if (Str.string_match re_op_land str pos) then
         Tok_Op_LAnd::(tok (pos+3) str)

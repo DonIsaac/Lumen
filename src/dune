@@ -1,6 +1,6 @@
 (library
   (name calc)
-  (modules lexer parser interpreter ast tokenTypes)
+  (modules lexer parser eval ast tokenTypes)
 ;  (modes byte exe)
   (libraries str)
   (flags (:standard -g)))

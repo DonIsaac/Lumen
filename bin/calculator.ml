@@ -1,10 +1,11 @@
 open Calc.Lexer
 open Calc.Parser
-open Calc.Interpreter
+open Calc.Eval
 open Calc.Ast
 open ANSITerminal
 
-let exec str = eval ( parser ( lexer str ))
+(* let exec str = eval ( parser ( lexer str )) *)
+let exec str = str |> lexer |> parser |> eval
 
 (** Prints a formatted error message to stderr *)
 let prerr_endline str = ANSITerminal.prerr_string [Foreground(Red); Bold] str ; prerr_newline ()
@@ -12,6 +13,7 @@ let prerr_endline str = ANSITerminal.prerr_string [Foreground(Red); Bold] str ; 
 (** Prints a formatted message to stdout *)
 let print_endline str = ANSITerminal.print_string [Foreground(Green)] str ; print_newline ()
 ;;
+
 (** REPL loop *)
 let rec loop () =
   print_string [Foreground(White); Bold] "> ";
@@ -19,8 +21,9 @@ let rec loop () =
   try
     begin
       let res = match exec input with
-        | Val_Int(n) -> string_of_int n
+        | Val_Int(n)  -> string_of_int n
         | Val_Bool(b) -> string_of_bool b
+        | Val_Null    -> "null"
       in
       print_endline @@ "= " ^ res;
       loop ();

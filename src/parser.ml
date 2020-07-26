@@ -10,7 +10,7 @@
   ==================================== *)
   STMT_CHAIN -> STMT_BLOCK STMT_BLOCK | STMT_BLOCK
   STMT_BLOCK -> "do" STMT_CHAIN "end" | STMT
-  STMT ->       STMT_CTL | EXPR TERM
+  STMT ->       STMT_CTL | EXPR {TERM EXPR}
   STMT_CTL ->   STMT_IF       (* TODO add more control statements and loops *)
   STMT_IF ->    "if" STMT_BLOCK "then" STMT_BLOCK ["else" STMT_BLOCK]
 
@@ -18,7 +18,7 @@
   (* Variable assignment and declaration
   ==================================== *)
   EXPR -> D
-  D -> let ID = A | A | "exit" N
+   D -> let ID = A | A | "exit" [N]
   A -> ID = A | S
 
   (* TODO block statements should go here *)
@@ -60,15 +60,53 @@ let lookahead toks = match toks with
     h::t -> h
   | _ -> raise (ParseError("Empty input to lookahead"))
 
-
 let rec parser (toks : token list) : expr =
 (** Parses a token list. *)
-  let a1 = parse_D toks in
+  let a1 = parse_stmt toks in
   let (toks, expr) = a1 in
-  let next = lookahead toks in
-  match next with
+  match toks with
+    | [] -> expr
+    | toks' -> raise @@ ParseError(
+        "Parsing completed, but there were tokens left.\n" ^
+        "Input:\n" ^ string_of_list string_of_token toks ^
+        "Output: \n" ^ string_of_list string_of_token toks')
+
+  (* let next = lookahead toks in
+   match next with
   | Tok_EOF -> expr
-  | _ -> raise (ParseError("Expected Tok_EOF, got " ^ (string_of_token next)))
+  | _ -> raise (ParseError("Expected Tok_EOF, got " ^ (string_of_token next))) *)
+
+and parse_stmt (toks : token list) : (token list * expr) =
+  let next = lookahead toks in
+  if next = Tok_EOF then
+    (match_token toks Tok_EOF, Null)
+  else
+    let (toks, stmt) = parse_opts toks in
+    let next = lookahead toks in
+    match next with
+      | Tok_EOF ->
+        let toks = match_token toks Tok_EOF in (toks, stmt)
+      | _ ->
+        let (toks, stmt') = parse_stmt toks in
+        (toks, Seq(stmt, stmt'))
+
+and parse_opts (toks : token list) : (token list * expr) =
+  match lookahead toks with
+    | Tok_RParen -> (toks, Null)
+    | _ ->
+      let a1 = parse_D toks in
+      let (toks, expr) = a1 in
+      let next = lookahead toks in
+      if next = Tok_Term then
+        let toks = match_token toks Tok_Term in
+        (toks, expr)
+        (* let (toks, expr') = parse_stmt toks in
+        (toks, Seq(expr, expr')) *)
+      else
+        a1
+
+
+
 (** Parses the D rule
     D -> let ID = A | A | "exit" N | "exit" *)
 and parse_D (toks : token list) : (token list * expr) =
@@ -80,10 +118,18 @@ and parse_D (toks : token list) : (token list * expr) =
     (
       match identifier with
       | Tok_ID(id) ->
-        let toks = match_token (match_token toks identifier) Tok_Assign in
-        let a1 = parse_A toks in
-        let (toks, a_expr) = a1 in
-        (toks, Decl(id, a_expr))
+        (
+          let toks = match_token toks identifier in
+          match lookahead toks with
+          | Tok_Assign -> (
+            let toks = match_token toks Tok_Assign in
+            let a1 = parse_A toks in
+            let (toks, a_expr) = a1 in
+            (toks, Decl(id, a_expr))
+          )
+          | Tok_EOF | Tok_Term | Tok_RParen -> (toks, Decl(id, Null))
+          | _ -> raise @@ ParseError ("Unexpected token '" ^ (string_of_token identifier) ^ "', expected '" ^ (string_of_token Tok_Assign) ^ "' or the end of the statement")
+        )
       | _ -> raise @@ ParseError ("Unexpected token '" ^ (string_of_token identifier) ^ "', expected '" ^ (string_of_token Tok_Assign) ^ "'")
     )
   | Tok_Exit ->
@@ -238,7 +284,8 @@ and parse_U (toks : token list) : (token list * expr) =
   | _ -> parse_N toks
 (*
   Parses the N rule.
-  N -> n | ID | (S)
+  OLD:  N -> n | ID | (S)
+  N -> n | ID | (STMT)
 *)
 and parse_N (toks : token list) : (token list * expr) =
   let token = lookahead toks in
@@ -251,8 +298,11 @@ and parse_N (toks : token list) : (token list * expr) =
   | Tok_ID(id) -> (match_token toks token, Var(id))
   | Tok_Bool(b) -> (match_token toks token, Bool(b))
   | Tok_LParen ->
-    let a1 = parse_A (match_token toks Tok_LParen) in
+    let a1 = parse_opts (match_token toks Tok_LParen) in
     let (toks, expr) = a1 in
     let tail = match_token toks Tok_RParen in
     (tail, expr)
-  | _ -> raise (ParseError("Unexpected token '" ^ (string_of_token token) ^ "' in parse_N"))
+  | _ -> raise (ParseError(
+        "Unexpected token '" ^ (string_of_token token) ^ "' in parse_N. Tokens: \n" ^
+        string_of_list string_of_token toks
+      ))

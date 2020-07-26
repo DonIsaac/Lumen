@@ -11,6 +11,7 @@ let string_of_primitive_type (prim : primitive) : string =
   match prim with
     | Val_Int(_) -> "int"
     | Val_Bool(_) -> "bool"
+    | Val_Null -> "null"
 let as_int (prim : primitive) : int =
   match prim with
     | Val_Int(n) -> n
@@ -71,18 +72,21 @@ let val_eq_struct a b = match a with
     | Val_Bool(q) -> Val_Bool(p = q)
     | _ -> Val_Bool(false)
   )
+| Val_Null -> Val_Bool(b = Val_Null)
 
 ;;
 
 let val_not a = match a with
-| Val_Int(n) -> Val_Bool(n = 0)
+| Val_Int(n)  -> Val_Bool(n = 0)
 | Val_Bool(p) -> Val_Bool(not p)
+| Val_Null    -> Val_Bool(true)
 ;;
 
 let rec eval (ast : expr) : primitive =
   match ast with
   | Int(n) -> Val_Int(n)
   | Bool(b) -> Val_Bool(b)
+  | Null -> Val_Null
   | LOr(p, q) -> Val_Bool( (as_bool @@ eval p) || (as_bool @@ eval q))
   | LAnd(p, q) -> Val_Bool( (as_bool @@ eval p) && (as_bool @@ eval q))
   | LNot(p) -> Val_Bool( not (as_bool @@ eval p))
@@ -101,4 +105,5 @@ let rec eval (ast : expr) : primitive =
   | Exp(a1, a2) -> Val_Int( int_of_float @@ (float_of_int (as_int @@ eval a1) ** (float_of_int ( as_int @@ eval a2))) )
   (* Log_b x = Log_a x/Log_a b *)
   | Log(a1, a2) -> Val_Int( int_of_float @@ log (float_of_int @@ (as_int @@ eval a2)) /. log (float_of_int @@ (as_int @@ eval a1)) )
+  | Seq(a1, a2) -> let _ = eval a1 in eval a2
   | Exit(a1) -> exit (as_int @@ eval a1)

@@ -1,5 +1,8 @@
 (executables
-  (names test parser-unit-test)
+  (names
+    test
+    parser-unit-test
+    integration)
   (libraries str calc oUnit))
 
 (alias
@@ -7,6 +10,7 @@
 ;  (deps (source_tree ./data))
   (action
     (progn (run ./test.bc)
-    (run ./parser-unit-test.bc))
+    (run ./parser-unit-test.bc)
+    (run ./integration.bc))
   )
 )
