@@ -26,5 +26,10 @@ type token =
   | Tok_Log
   | Tok_Base
   | Tok_Of
+  | Tok_Do
+  | Tok_End
+  | Tok_If
+  | Tok_Then
+  | Tok_Else
   | Tok_EOF
   | Tok_Exit

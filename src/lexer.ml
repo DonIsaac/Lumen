@@ -31,6 +31,11 @@ let string_of_token tok = match tok with
   | Tok_Log               -> "log"
   | Tok_Base              -> "base"
   | Tok_Of                -> "of"
+  | Tok_Do                -> "do"
+  | Tok_End               -> "end"
+  | Tok_If                -> "if"
+  | Tok_Then              -> "then"
+  | Tok_Else              -> "else"
   | Tok_EOF               -> "EOF"
   | Tok_Exit              -> "exit"
 
@@ -73,6 +78,11 @@ let re_let                = keyword_regex "let"
 let re_log                = keyword_regex "log"
 let re_base               = keyword_regex "base"
 let re_of                 = keyword_regex "of"
+let re_do                 = keyword_regex "do"
+let re_end                = keyword_regex "end"
+let re_if                 = keyword_regex "if"
+let re_then               = keyword_regex "then"
+let re_else               = keyword_regex "else"
 let re_exit               = keyword_regex "exit"
 
 let re_whitespace         = Str.regexp "[ \n\r\x0c\t]+"
@@ -158,6 +168,21 @@ let rec lexer (input : string) : token list =
 
       else if (Str.string_match re_of str pos) then
         Tok_Of::(tok (pos+2) str)
+
+      else if (Str.string_match re_do str pos) then
+        Tok_Do::(tok (pos+2) str)
+
+      else if (Str.string_match re_end str pos) then
+        Tok_End::(tok (pos+3) str)
+
+      else if (Str.string_match re_if str pos) then
+        Tok_If::(tok (pos+2) str)
+
+      else if (Str.string_match re_then str pos) then
+        Tok_Then::(tok (pos+4) str)
+
+      else if (Str.string_match re_else str pos) then
+        Tok_Else::(tok (pos+4) str)
 
       else if (Str.string_match re_exit str pos) then
         Tok_Exit::(tok (pos+4) str)
