@@ -6,10 +6,13 @@ open ANSITerminal
 
 let exec str = eval ( parser ( lexer str ))
 
+(** Prints a formatted error message to stderr *)
 let prerr_endline str = ANSITerminal.prerr_string [Foreground(Red); Bold] str ; prerr_newline ()
 ;;
+(** Prints a formatted message to stdout *)
 let print_endline str = ANSITerminal.print_string [Foreground(Green)] str ; print_newline ()
 ;;
+(** REPL loop *)
 let rec loop () =
   print_string [Foreground(White); Bold] "> ";
   let input = read_line () in
