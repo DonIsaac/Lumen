@@ -5,7 +5,6 @@ exception EvalError of string
 exception TypeError of string
 
 let env : (variable list ref) = ref []
-(* Evaluater *)
 
 let string_of_primitive_type (prim : primitive) : string =
   match prim with
@@ -106,4 +105,6 @@ let rec eval (ast : expr) : primitive =
   (* Log_b x = Log_a x/Log_a b *)
   | Log(a1, a2) -> Val_Int( int_of_float @@ log (float_of_int @@ (as_int @@ eval a2)) /. log (float_of_int @@ (as_int @@ eval a1)) )
   | Seq(a1, a2) -> let _ = eval a1 in eval a2
+  | Block stmt -> eval stmt (* TODO add environment stacks and stuff *)
+  | If(cond, a, b) -> if (as_bool @@ eval cond) then eval a else eval b (* TODO don't fail if eval_cond isn't a bool *)
   | Exit(a1) -> exit (as_int @@ eval a1)

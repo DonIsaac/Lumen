@@ -1,6 +1,7 @@
 (library
   (name calc)
-  (modules lexer parser eval ast tokenTypes)
+  (modules interface lexer parser eval ast tokenTypes)
 ;  (modes byte exe)
   (libraries str)
+;   (preprocess (pps bisect_ppx))
   (flags (:standard -g)))

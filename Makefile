@@ -4,14 +4,10 @@ TARGET = calculator
 build: $(OBJECTS)
 	dune build bin/calculator.exe
 
-.PHONY: utop run install test debug build-debug
+.PHONY: utop run install test debug build-debug coverage
 
 install:
-	opam install dune ANSITerminal merlin utop ounit2
-
-# Opens a utop shell
-utop:
-	dune utop src
+	opam install dune ANSITerminal merlin utop ounit2 bisect_ppx
 
 # Launches the calculator program
 run:
@@ -20,10 +16,18 @@ run:
 test:
 	dune runtest -f
 
+
 # ------------------ DEBUGGING COMMANDS ------------------
+
+# Opens a utop shell
+utop:
+	dune utop src
 
 debug: build-debug
 	ocamldebug _build/default/bin/$(TARGET).bc
 
 build-debug: $(OBJECTS)
 	dune build bin/$(TARGET).bc
+
+coverage: test
+	bisect-ppx-report html

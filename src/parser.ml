@@ -47,29 +47,76 @@ exception ParseError of string
     is popped off and the tail is returned. Otherwise, a ParseError is raised. *)
 let match_token (toks : token list) (tok : token) : token list =
   match toks with
-  | []                -> raise (ParseError(Printf.sprintf "Unexpected end of input, expected token %s" (string_of_token tok)))
+  | []                -> raise (ParseError(Printf.sprintf "Unexpected end of input, expected token '%s'" (string_of_token tok)))
   | h::t when h = tok -> t
   | h::_              -> raise (ParseError(
-      Printf.sprintf "Unexpected token %s, expected %s from input %s"
+      Printf.sprintf "Unexpected token \"%s\", expected \"%s\" from input \"%s\""
         (string_of_token h)                   (* actual   *)
         (string_of_token tok)                 (* expected *)
         (string_of_list string_of_token toks)
     ))
+;;
 
 let lookahead toks = match toks with
     h::t -> h
   | _ -> raise (ParseError("Empty input to lookahead"))
+;;
+
+(**
+  Whenever the parser enters some kind of block statement where a matching
+  separator/terminator token is expected, the separator/terminator token in question
+  is pushed onto this stack. For example, if the token "do" is found, then "end"
+  is pushed onto this stack
+ *)
+let sep_stack : (token * token) list ref = ref []
+let push_sep (tok : token) : unit =
+  let push b e = sep_stack := (b, e)::(!sep_stack) in
+  match tok with
+    | Tok_If      -> push Tok_If Tok_Then
+    | Tok_Then    -> push Tok_Then Tok_Else
+    | Tok_LParen  -> push Tok_LParen Tok_RParen
+    | Tok_Do      -> push Tok_Do Tok_End
+    | _ -> raise @@ ParseError("Cannot add token \"" ^ (string_of_token tok) ^ "\" to the separator stack")
+;;
+let consume_sep (toks: token list) (tok : token) : token list =
+  let next = lookahead toks in
+  if next = Tok_Term || next = Tok_EOF then
+    match_token toks tok
+  else
+    match !sep_stack with
+    | [] -> raise @@ ParseError ("Unexpected empty separator stack while popping token \"" ^ (string_of_token tok) ^ "\"")
+    | (b, e)::t when e = tok -> sep_stack := t; match_token toks tok
+    | _ -> raise @@ ParseError ("Something went horribly wrong in parser.ml > consume_sep")
+;;
+let is_stmt_end (toks : token list) : bool =
+  let sep_top_match tok = match !sep_stack with
+    | [] -> false
+    | (_, e)::_ -> tok = e
+  in
+  match toks with
+  | [] -> raise @@ ParseError ("Received empty input while looking for separator token")
+  | h::_ ->
+    if sep_top_match h then
+      true
+    else
+      match h with
+        | Tok_EOF | Tok_Term -> true
+        | _                  -> false
+
 
 let rec parser (toks : token list) : expr =
 (** Parses a token list. *)
+  sep_stack := [];
+  if lookahead toks = Tok_EOF then Null else
   let a1 = parse_stmt toks in
   let (toks, expr) = a1 in
   match toks with
-    | [] -> expr
+    | [] -> raise @@ ParseError("EOF was consumed illegally during parse()")
+    | Tok_EOF::[] -> expr
     | toks' -> raise @@ ParseError(
         "Parsing completed, but there were tokens left.\n" ^
-        "Input:\n" ^ string_of_list string_of_token toks ^
-        "Output: \n" ^ string_of_list string_of_token toks')
+        "Input: " ^ string_of_list string_of_token toks ^
+        "\nOutput: " ^ string_of_list string_of_token toks')
 
   (* let next = lookahead toks in
    match next with
@@ -77,22 +124,42 @@ let rec parser (toks : token list) : expr =
   | _ -> raise (ParseError("Expected Tok_EOF, got " ^ (string_of_token next))) *)
 
 and parse_stmt (toks : token list) : (token list * expr) =
+  let (toks, stmt) = parse_opts toks in
   let next = lookahead toks in
-  if next = Tok_EOF then
-    (match_token toks Tok_EOF, Null)
-  else
-    let (toks, stmt) = parse_opts toks in
-    let next = lookahead toks in
-    match next with
-      | Tok_EOF ->
-        let toks = match_token toks Tok_EOF in (toks, stmt)
-      | _ ->
-        let (toks, stmt') = parse_stmt toks in
-        (toks, Seq(stmt, stmt'))
+  match next with
+    | Tok_EOF | Tok_Then | Tok_Else | Tok_End ->
+      (toks, stmt)
+    | _ ->
+      let (toks, stmt') = parse_stmt toks in
+      (toks, Seq(stmt, stmt'))
 
 and parse_opts (toks : token list) : (token list * expr) =
   match lookahead toks with
-    | Tok_RParen -> (toks, Null)
+    | Tok_RParen | Tok_End | Tok_Then -> (toks, Null)
+
+    (* Block statements *)
+    | Tok_Do ->
+      let toks = match_token toks Tok_Do in
+      let (toks, expr) = parse_stmt toks in
+      let toks = match_token toks Tok_End in
+      (toks, Block expr)
+
+    (** If statements
+        "if" expr "then" expr ["else" expr] *)
+    | Tok_If ->
+      let toks = match_token toks Tok_If in
+      let (toks, conditional) = parse_opts toks in
+      let toks = match_token toks Tok_Then in
+      let (toks, if_branch) = parse_opts toks in
+      if lookahead toks = Tok_Else then
+        let toks = match_token toks Tok_Else in
+        let (toks, else_branch) = parse_opts toks in
+        (toks, If(conditional, if_branch, else_branch))
+      else
+        (toks, If(conditional, if_branch, Null))
+
+
+    (* Arithmetic, etc expressions *)
     | _ ->
       let a1 = parse_D toks in
       let (toks, expr) = a1 in
@@ -123,7 +190,7 @@ and parse_D (toks : token list) : (token list * expr) =
           match lookahead toks with
           | Tok_Assign -> (
             let toks = match_token toks Tok_Assign in
-            let a1 = parse_A toks in
+            let a1 = parse_opts toks in
             let (toks, a_expr) = a1 in
             (toks, Decl(id, a_expr))
           )
@@ -151,7 +218,7 @@ and parse_A (toks : token list) : (token list * expr) =
   match next with
   | Tok_ID(id) when (lookahead (match_token toks next)) = Tok_Assign ->
     let toks = match_token (match_token toks next) Tok_Assign in
-    let a1 = parse_A toks in
+    let a1 = parse_opts toks in
     let (toks, a_expr) = a1 in
     (toks, Assign(id, a_expr))
   | _ -> parse_expr_lor toks

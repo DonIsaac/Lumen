@@ -13,11 +13,33 @@
             "stopOnEntry": false
         },
         {
-            "name": "Test",
+            "name": "Test - test.ml",
             "type": "ocaml-debugger",
             "request": "launch",
             "program": "${workspaceRoot}/_build/default/test/test.bc",
             "console": "internalConsole",
+            "stopOnEntry": false
+        },
+        {
+            "name": "Test - integration.ml",
+            "type": "ocaml-debugger",
+            "request": "launch",
+            "program": "${workspaceRoot}/_build/default/test/integration.bc",
+            "console": "internalConsole",
+            "stopOnEntry": false
+        },
+        {
+            "name": "Test - Debuggable",
+            "type": "ocaml-debugger",
+            "request": "launch",
+            "program": "${workspaceRoot}/_build/default/test/debuggable.bc",
+            "console": "internalConsole",
+            "dotMerlins": [
+                "${workspaceRoot}/**/.merlin"
+            ],
+            "env":{
+                "OCAMLRUNPARAM": "b"
+            },
             "stopOnEntry": false
         }
     ]

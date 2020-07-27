@@ -3,7 +3,7 @@ open Calc.TokenTypes
 open Calc.Ast
 open Calc.Lexer
 open Calc.Parser
-open Calc.Interpreter
+open Calc.Eval
 
 let test_lex_empty ctxt =
   assert_equal [Tok_EOF] (lexer " ")

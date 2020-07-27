@@ -1,4 +1,9 @@
 _build/
+_coverage/
+tmp/
+*.coverage
+*.log
+*.tmp
 .merlin
 **/.merlin
 *.swp

@@ -1,0 +1,13 @@
+let x = 5;
+let z = if true and not false then
+do
+    let y = 8;
+    x + y;
+end
+    else
+do
+    let y = 9;
+    y - x;
+end
+z = z + 4;
+log base x of z

@@ -1,4 +1,6 @@
-open Calc.Lexer
 open Calc.TokenTypes
+open Calc.Ast
+open Calc.Lexer
 open Calc.Parser
-open Calc.Interpreter
+open Calc.Eval
+open Calc.Interface

@@ -1,8 +1,11 @@
 (executables
   (names
     test
+    debuggable
     parser-unit-test
     integration)
+  (flags -g)
+  (modes byte native)
   (libraries str calc oUnit))
 
 (alias

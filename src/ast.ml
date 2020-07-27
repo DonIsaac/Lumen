@@ -26,7 +26,15 @@ type expr =
   | Decl of string * expr
   (* Control Flow, Process Structure *)
   | Seq of expr * expr
+  | Block of expr
+  | If of expr * expr * expr
   | Exit of expr
 
 type primitive = Val_Int of int | Val_Bool of bool | Val_Null
 type variable = Var of string * primitive ref | Undefined
+
+let string_of_primitive p =
+  match p with
+  | Val_Int n   -> string_of_int n
+  | Val_Bool p  -> string_of_bool p
+  | Val_Null    -> "null"
