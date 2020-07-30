@@ -1,7 +1,7 @@
 open OUnit2
-open Calc.Interface
+open Lumen.Interface
 
 let assert_source ctxt src expected =
-    let actual = Calc.Interface.exec src in
-    assert_equal expected actual ~ctxt:ctxt ~printer:Calc.Ast.string_of_primitive
+    let actual = Lumen.Interface.exec src in
+    assert_equal expected actual ~ctxt:ctxt ~printer:Lumen.Ast.string_of_primitive
 ;;

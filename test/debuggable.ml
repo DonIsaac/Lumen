@@ -1,8 +1,8 @@
-open Calc.Eval
-open Calc.Interface
-open Calc.Lexer
-open Calc.Parser
-open Calc.Ast
+open Lumen.Eval
+open Lumen.Interface
+open Lumen.Lexer
+open Lumen.Parser
+open Lumen.Ast
 open Util
 ;;
 let input = {|

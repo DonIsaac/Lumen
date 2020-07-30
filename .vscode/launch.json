@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Calculator",
-            "type": "ocamldebug",
+            "name": "Lumen",
+            "type": "ocaml-debugger",
             "request": "launch",
-            "program": "${workspaceRoot}/_build/default/bin/calculator.bc",
+            "program": "${workspaceRoot}/_build/default/bin/lumen.bc",
             "console": "internalConsole",
             "stopOnEntry": false
         },

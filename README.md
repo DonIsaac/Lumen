@@ -1,4 +1,5 @@
-# Arithmetic Interpreter
+![Build/Test on Push/PR](https://github.com/DonIsaac/Lumen/workflows/Build/Test%20on%20Push/PR/badge.svg)
+# Lumen
 
 This project is an interpreter for a language that supports some basic mathematical
 operations. It works by sending user input through a lexer and parser, and then
@@ -13,7 +14,7 @@ The language used by this interpreter supports the following features:
 - Logarithms and exponents
 - Variable declaration, assignment, and usage
 - Negative and positive integers
-- Right-associative calculations
+- Right-associative Lumenulations
 
 ## Installation
 
@@ -22,7 +23,7 @@ installed before continuing
 
 ```sh
 git clone https://github.com/DonIsaac/Arithmetic-Interpreter.git
-cd Arithmetic-Interpreter
+cd Lumen
 make install # Install necessary dependencies
 make # Build the interpreter using dune
 make run # execute the binary
@@ -93,7 +94,7 @@ make installed in order to use them. The available commands are as follows:
 
 - __make build__ - Default command. Compiles the interpreter. This task will fail
 if the required dependencies are not installed.
-- __make install__ - Installs dependencies required for calculation
+- __make install__ - Installs dependencies required for Lumenulation
 - __make run__ - Executes the compiled interpreter
 - __make utop__ - Launches `utop` for testing purposes
 - __make test__ - Runs the tests found in `test/test.ml`

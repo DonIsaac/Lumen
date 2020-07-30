@@ -1,20 +1,20 @@
 OBJECTS = src/*.ml* bin/*.ml*
-TARGET = calculator
+TARGET = lumen
 
 build: $(OBJECTS)
-	dune build bin/calculator.exe
+	dune build bin/lumen.exe
 
 .PHONY: utop run install test debug build-debug coverage
 
 install:
 	opam install dune ANSITerminal merlin utop ounit2 bisect_ppx
 
-# Launches the calculator program
+# Launches the Lumen interpreter
 run:
-	./_build/default/bin/calculator.exe
+	./_build/default/bin/lumen.exe
 
 test:
-	dune runtest -f
+	BISECT_ENABLE=yes dune runtest -f
 
 
 # ------------------ DEBUGGING COMMANDS ------------------

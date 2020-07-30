@@ -1,9 +1,9 @@
 open OUnit2
-open Calc.TokenTypes
-open Calc.Ast
-open Calc.Lexer
-open Calc.Parser
-open Calc.Eval
+open Lumen.TokenTypes
+open Lumen.Ast
+open Lumen.Lexer
+open Lumen.Parser
+open Lumen.Eval
 open Util
 
 let test_simple_add (ctx: test_ctxt) =
@@ -47,12 +47,12 @@ let test_simple_logical_expr (ctx: test_ctxt) =
   assert_source ctx "true or false and not false" (Val_Bool true)
 ;;
 let test_simple_vars (ctx: test_ctxt) =
-  assert_source ctx "let x" Val_Null;
-  assert_source ctx "let x = ()" Val_Null;
-  assert_source ctx "let y = 5" (Val_Int 5);
-  assert_source ctx "let x = 5; let y = true" (Val_Bool true);
-  assert_source ctx "let x = 5; let y = 2; let z = 5 + x + y" (Val_Int 12);
-  assert_source ctx "let x = 5; let y = 10; x + y" (Val_Int 15)
+  assert_source ctx "let a" Val_Null;
+  assert_source ctx "let b = ()" Val_Null;
+  assert_source ctx "let c = 5" (Val_Int 5);
+  assert_source ctx "let d = 5; let e = true" (Val_Bool true);
+  assert_source ctx "let f = 5; let g = 2; let h = 5 + f + g" (Val_Int 12);
+  assert_source ctx "let i = 5; let k = 10; i + k" (Val_Int 15)
 ;;
 let test_simple_if (ctx: test_ctxt) =
   assert_source ctx "if true then 5" (Val_Int 5);

@@ -1,8 +1,6 @@
 (executable
-    (name calculator)
-    (libraries calc ANSITerminal)
-    (modes byte exe js)
-    (flags (:standard
-        -g
-        -keep-docs))
-    )
+ (name lumen)
+ (libraries lumen ANSITerminal)
+ (modes byte exe js)
+ (flags
+  (:standard -g -keep-docs)))

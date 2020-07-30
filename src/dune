@@ -1,7 +1,21 @@
+(* -*- tuareg -*- *)
+
+let preprocess =
+  match Sys.getenv "BISECT_ENABLE" with
+  | "yes" -> "(preprocess (pps bisect_ppx))"
+  | _ -> ""
+  | exception Not_found -> ""
+
+let () = Jbuild_plugin.V1.send @@ {|
+
 (library
-  (name calc)
-  (modules interface lexer parser eval ast tokenTypes)
+  (name lumen)
+  (modules interface lexer parser eval ast tokenTypes environment)
+  (private_modules environment)
 ;  (modes byte exe)
   (libraries str)
+  |} ^ preprocess ^ {|
 ;   (preprocess (pps bisect_ppx))
   (flags (:standard -g)))
+
+|}

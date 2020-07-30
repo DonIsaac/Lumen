@@ -33,6 +33,9 @@ type expr =
 type primitive = Val_Int of int | Val_Bool of bool | Val_Null
 type variable = Var of string * primitive ref | Undefined
 
+exception EvalError of string
+exception TypeError of string
+
 let string_of_primitive p =
   match p with
   | Val_Int n   -> string_of_int n

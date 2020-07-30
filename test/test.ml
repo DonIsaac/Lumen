@@ -1,9 +1,9 @@
 open OUnit2
-open Calc.TokenTypes
-open Calc.Ast
-open Calc.Lexer
-open Calc.Parser
-open Calc.Eval
+open Lumen.TokenTypes
+open Lumen.Ast
+open Lumen.Lexer
+open Lumen.Parser
+open Lumen.Eval
 
 let test_lex_empty ctxt =
   assert_equal [Tok_EOF] (lexer " ")

@@ -1,8 +1,8 @@
-open Calc.Lexer
-open Calc.Parser
-open Calc.Eval
-open Calc.Ast
-open Calc.Interface
+open Lumen.Lexer
+open Lumen.Parser
+open Lumen.Eval
+open Lumen.Ast
+open Lumen.Interface
 open ANSITerminal
 open Array
 
